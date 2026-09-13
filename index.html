@@ -483,11 +483,11 @@
   }
 
   // 塞資料後再置中；初次繪製有 300ms 展開動畫，動畫跑完才量得到真正的內容範圍
+  // 注意：mm.setData() 回傳的 Promise 不保證 resolve，不能掛 .then() 等它，
+  // 否則置中永遠不會執行。改用計時器，refit() 本身會擋掉尺寸還沒就緒的情況。
   svgNode.__zoom = d3.zoomIdentity;
-  Promise.resolve(mm.setData(res.root)).then(function () {
-    refit();
-    [350, 800].forEach(function (t) { setTimeout(refit, t); });
-  });
+  mm.setData(res.root);
+  [0, 120, 400, 900].forEach(function (t) { setTimeout(refit, t); });
 
   var rafId = null;
   function scheduleRefit() {
