@@ -502,7 +502,11 @@
     if (!g) return true;
     try {
       var bb = g.getBBox();
-      return !(bb.width > 20 && bb.height > 20);
+      // 背景分頁下量測會部分失敗（例如 27 個節點只量到 218x37），
+      // 所以用節點數推估合理高度來判斷，而不是只看「有沒有大於 0」。
+      var n = svg.selectAll('g.markmap-node').size();
+      var minHeight = Math.min(n, 40) * 8;
+      return !(bb.width > 50 && bb.height > minHeight);
     } catch (e) { return true; }
   }
 
