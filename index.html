@@ -459,15 +459,19 @@
 
   function refit() {
     var box = main.getBoundingClientRect();
-    var rect = mm.state && mm.state.rect;
-    if (!box.width || !box.height || !rect) return;
+    var gNode = svg.select('g').node();
+    if (!box.width || !box.height || !gNode) return;
 
-    var w = rect.x2 - rect.x1, h = rect.y2 - rect.y1;
+    // 用 g 的實際 bounding box，不用 mm.state.rect
+    // ——後者在展開/收合後不會更新，會拿舊範圍去算縮放。
+    var bb;
+    try { bb = gNode.getBBox(); } catch (e) { return; }
+    var w = bb.width, h = bb.height;
     if (!(w > 0) || !(h > 0)) return;
 
     var k = Math.min(box.width / w * FIT_RATIO, box.height / h * FIT_RATIO, MAX_SCALE);
-    var tx = (box.width - w * k) / 2 - rect.x1 * k;
-    var ty = (box.height - h * k) / 2 - rect.y1 * k;
+    var tx = (box.width - w * k) / 2 - bb.x * k;
+    var ty = (box.height - h * k) / 2 - bb.y * k;
     if (!isFinite(k) || !isFinite(tx) || !isFinite(ty)) return;
 
     var t = d3.zoomIdentity.translate(tx, ty).scale(k);
@@ -512,7 +516,7 @@
       (node.children || []).forEach(function (c) { walk(c, depth + 1); });
     })((mm.state && mm.state.data) || res.root, 0);
     mm.renderData();
-    [350, 700].forEach(function (t) { setTimeout(refit, t); });
+    [350, 700, 1200].forEach(function (t) { setTimeout(refit, t); });
   }
 
   document.getElementById('lv2').onclick = function () { setLevel(2); };
