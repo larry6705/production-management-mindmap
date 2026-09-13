@@ -438,7 +438,7 @@
   // 事後才 setData() 會讓所有節點疊在同一點（展開後尤其明顯）。
   // 代價是 create 內部會立刻 fit() 一次並可能算出 NaN 縮放矩陣，
   // 這由下面自己的 refit() 覆蓋掉。
-  var mm = markmap.Markmap.create(svg.node(), {
+  var OPTIONS = {
     colorFreezeLevel: 2,
     initialExpandLevel: 3,
     maxWidth: 340,
@@ -447,7 +447,8 @@
     paddingX: 16,
     fitRatio: 0.92,
     duration: 300
-  }, res.root);
+  };
+  var mm = markmap.Markmap.create(svg.node(), OPTIONS, res.root);
 
   // 自己算置中，不用 mm.fit()。
   // mm.fit() 是用 d3 transition 套用縮放，多次 fit 或動畫未結束時重疊呼叫，
@@ -492,6 +493,36 @@
   // 初次繪製有 300ms 展開動畫，動畫跑完才量得到真正的內容範圍。
   // 多排幾次是為了蓋掉 create() 內部那次可能算出 NaN 的 fit。
   [0, 150, 450, 1000, 1800].forEach(function (t) { setTimeout(refit, t); });
+
+  // 在背景分頁載入時，瀏覽器不排版，markmap 量到的節點尺寸全是 0，
+  // 結果是所有節點疊在同一點、縮放矩陣變成 NaN。
+  // 偵測到這種壞掉的佈局就整個重建一次。
+  function layoutBroken() {
+    var g = svg.select('g').node();
+    if (!g) return true;
+    try {
+      var bb = g.getBBox();
+      return !(bb.width > 20 && bb.height > 20);
+    } catch (e) { return true; }
+  }
+
+  function rebuild() {
+    svg.selectAll('*').remove();
+    svgNode.__zoom = d3.zoomIdentity;
+    mm = markmap.Markmap.create(svgNode, OPTIONS, new markmap.Transformer().transform(md).root);
+    window.mm = mm;
+    [0, 150, 450, 1000].forEach(function (t) { setTimeout(refit, t); });
+  }
+
+  function healIfBroken() {
+    if (document.visibilityState === 'visible' && layoutBroken()) rebuild();
+    else refit();
+  }
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible') setTimeout(healIfBroken, 60);
+  });
+  setTimeout(healIfBroken, 1200);
 
   var rafId = null;
   function scheduleRefit() {
