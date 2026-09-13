@@ -434,6 +434,10 @@
   var transformer = new markmap.Transformer();
   var res = transformer.transform(md);
   var svg = d3.select('#mm');
+  // 注意：Markmap.create(svg, opts, data) 會在建立當下立刻 fit() 一次，
+  // 那時節點還沒完成佈局，算出的縮放矩陣是 NaN 並且會一直殘留下去
+  // （瀏覽器拒收 NaN transform → 整張圖直接不顯示）。
+  // 所以這裡建立時不帶資料，之後再自己 setData + 自己置中。
   var mm = markmap.Markmap.create(svg.node(), {
     colorFreezeLevel: 2,
     initialExpandLevel: 3,
@@ -443,7 +447,7 @@
     paddingX: 16,
     fitRatio: 0.92,
     duration: 300
-  }, res.root);
+  });
 
   // 自己算置中，不用 mm.fit()。
   // mm.fit() 是用 d3 transition 套用縮放，多次 fit 或動畫未結束時重疊呼叫，
@@ -472,8 +476,12 @@
     svg.select('g').attr('transform', t.toString());
   }
 
-  // 初次繪製有 300ms 展開動畫，動畫跑完才量得到真正的內容範圍
-  [350, 800].forEach(function (t) { setTimeout(refit, t); });
+  // 塞資料後再置中；初次繪製有 300ms 展開動畫，動畫跑完才量得到真正的內容範圍
+  svgNode.__zoom = d3.zoomIdentity;
+  Promise.resolve(mm.setData(res.root)).then(function () {
+    refit();
+    [350, 800].forEach(function (t) { setTimeout(refit, t); });
+  });
 
   var rafId = null;
   function scheduleRefit() {
@@ -493,7 +501,7 @@
       node.payload = node.payload || {};
       node.payload.fold = (n >= 0 && depth >= n) ? 1 : 0;
       (node.children || []).forEach(function (c) { walk(c, depth + 1); });
-    })(res.root, 0);
+    })((mm.state && mm.state.data) || res.root, 0);
     mm.renderData();
     [350, 700].forEach(function (t) { setTimeout(refit, t); });
   }
