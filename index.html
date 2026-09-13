@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>高等生產管理 知識領域 MindMap</title>
+<style>
+  html,body{margin:0;padding:0;height:100%;font-family:"Microsoft JhengHei","Noto Sans TC",sans-serif;background:#fbfaf7;overflow:hidden;}
+  body{display:flex;flex-direction:column;}
+  header{flex:0 0 auto;display:flex;align-items:center;gap:14px;min-height:52px;
+         padding:8px 18px;background:#111827;color:#fff;box-sizing:border-box;}
+  header h1{font-size:16px;margin:0;font-weight:600;white-space:nowrap;}
+  header .sub{font-size:12px;color:#9ca3af;}
+  header .btns{margin-left:auto;display:flex;gap:8px;}
+  header button{font:inherit;font-size:12px;padding:5px 12px;border:1px solid #374151;background:#1f2937;color:#e5e7eb;
+                border-radius:4px;cursor:pointer;white-space:nowrap;}
+  @media (max-width:980px){header .sub{display:none;}}
+  header button:hover{background:#374151;}
+  main{flex:1 1 auto;position:relative;min-height:0;overflow:hidden;}
+  #mm{position:absolute;inset:0;width:100%;height:100%;display:block;overflow:hidden;}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/markmap-lib@0.18.10"></script>
+<script src="https://cdn.jsdelivr.net/npm/markmap-view@0.18.10"></script>
+</head>
+<body>
+<header>
+  <h1>高等生產管理 — 知識領域地圖</h1>
+  <span class="sub">製造管理與決策 ｜ 點節點展開收合、滾輪縮放、拖曳平移</span>
+  <span class="btns">
+    <button id="lv2">只看六大面</button>
+    <button id="lv3">展到領域</button>
+    <button id="lv4">展到子題</button>
+    <button id="all">全部展開</button>
+    <button id="fit">置中</button>
+  </span>
+</header>
+<main><svg id="mm"></svg></main>
+
+<script type="text/template" id="md">
+# 高等生產管理
+
+## 一 設計面
+### 1 生產策略
+#### 系統分類
+- 專案型 / 零工式 / 批量 / 流線 / 連續
+#### 接單策略
+- MTS / ATO / MTO / ETO
+- 顧客訂單解耦點 CODP
+#### 策略架構
+- 競爭優先序：成本 品質 交期 彈性 韌性 永續
+- 能力取捨 vs. Sand Cone 累積能力
+- 產品—製程矩陣 Hayes-Wheelwright
+- 訂單資格條件 vs. 訂單贏得條件
+- 全球製造網路佈局
+#### 演進脈絡
+- 科學管理 → MRP → MRP II/ERP → JIT/TPS → TOC → 智慧製造
+
+### 2 產品設計
+#### 開發流程
+- Stage-Gate 制度
+- 概念→系統→細部→試產→量產
+- 併行工程 Concurrent Engineering
+#### QFD 品質機能展開
+- VOC → 工程特性 → 零件 → 製程 → 管制
+#### DFX 家族
+- DFM 可製造性 / DFA 易組裝
+- DFQ / DFS 可服務性 / DfE 環境導向
+- 設計階段鎖定 70-80% 產品成本
+#### 架構與成本
+- 模組化設計 / 產品平台 / 零件標準化
+- BOM 設計：多階 / 模組化 / Planning BOM
+- 價值工程 VE·VA / 目標成本制
+#### 客製化前提
+- 延遲策略 Postponement
+- 解耦點設計
+#### 變更管理
+- ECN / ECO 對生產與庫存衝擊
+
+### 3 製程設計
+#### 製程選擇
+- 製程型態與產品矩陣一致性
+- 自動化程度：手動/半自動/全自動/FMS
+- 設備選擇與投資評估
+#### 製程分析
+- 流程圖 / 製程圖 / 人機程序圖
+#### 工作研究
+- 方法研究：動作經濟原則 / ECRS
+- 時間研究：碼錶測時 / 評比與寬放
+- 預定動作時間 MTM·MOST / 工作抽查
+- 標準工時用途：產能 排程 成本 績效
+#### 生產線平衡
+- 工作站分派 / 平衡效率 / 節拍時間
+#### 群組技術
+- 零件分類編碼 / 細胞式製造前提
+#### 製程失效預防
+- PFMEA / 管制計畫 / 製程確效
+#### 新興議題
+- 積層製造 AM / 人機協作單元
+
+### 4 設施規劃與工廠佈置
+#### 設施規劃
+- 選址：因素評分 / 重心法 / 運輸模式
+- 考量：市場 成本 勞動力 關稅 風險
+- 廠房規模與階段性擴充
+#### 佈置型態
+- 固定位置式 / 製程別 / 產品別 / 細胞式
+#### SLP 系統化佈置規劃
+- P-Q-R-S-T 分析
+- 關係圖 → 空間關係圖 → 方案評估
+#### 分析工具
+- 從至表 / 關係矩陣 / 流量-距離成本
+- QAP 二次分派 / CRAFT·ALDEP·CORELAP
+#### 物料搬運 MHS
+- 設備選擇 / AGV·AMR 路徑與車隊
+- 輸送帶配置
+#### 倉儲佈置
+- ABC 儲位 / 揀貨路徑 / 自動倉 AS·RS
+#### 評估與精實觀點
+- 物流成本 彈性 安全 人因
+- U 型線 / 單件流 / 減少暫存
+
+## 二 規劃面
+### 5 需求預測
+#### 定性法
+- 德爾菲法 / 專家判斷 / 市場調查
+#### 時間序列
+- 移動平均 / 指數平滑
+- Holt / Holt-Winters / 分解法 / ARIMA
+#### 因果模式
+- 迴歸 / 計量經濟
+#### 誤差衡量
+- MAD / MSE / MAPE / 追蹤信號
+#### 進階
+- 間歇性需求 Croston
+- 機器學習預測
+- 預測與決策整合
+
+### 6 產能與總合計畫
+#### 長期產能
+- 擴充時機與規模 / 領先·落後策略
+- 規模經濟 / 學習曲線
+#### 總合生產計畫 APP
+- 追逐 / 平準 / 混合策略
+- 運輸模式 / LP·MILP
+- 加班 外包 雇用 庫存 欠撥
+#### S&OP / IBP
+- 跨部門供需共識流程
+#### 粗估產能
+- RCCP / RRP
+
+### 7 MPS→MRP→ERP→APS
+#### 主生產排程 MPS
+- ATP 可承諾量 / 時間柵欄 / 訂單允諾
+#### MRP
+- 輸入：MPS / BOM / 庫存檔
+- 毛需求→淨需求→批量→時間反推
+- 批量法則 L4L EOQ POQ Silver-Meal Wagner-Whitin
+- 系統緊張 / 安全前置時間 / 低階碼
+- 缺陷：固定前置時間 · 無限產能
+#### CRP 與閉環 MRP
+- 負荷剖面 / 投料控制
+#### 系統演進
+- MRP II / ERP / MES
+- APS 有限產能最佳化
+- DDMRP 策略性緩衝解耦
+
+### 8 採購管理
+#### 定位
+- 物料成本占製造成本 50-70%
+#### Make-or-Buy
+- 成本 核心能力 彈性 技術外流風險
+#### 策略性採購
+- 支出分析→市場分析→尋源→議價→合約→績效
+- Kraljic 矩陣：槓桿 策略 瓶頸 一般
+#### 供應商管理
+- 評選 QCDSM / AHP·TOPSIS·DEA
+- 開發輔導稽核 / 績效計分卡
+- 單一源 vs 雙源多源 / ESI 早期參與
+#### 作業模式
+- 集中 vs 分散 / 框架合約
+- e-Procurement / 線上競標
+- TCO 總持有成本思維
+#### 前置時間與委外
+- 採購前置時間變異 → 安全存量驅動因子
+- 委外工序的排程品質帳務管控
+#### 風險與永續
+- 斷料 漲價 匯率 地緣政治
+- 供應商 ESG 稽核 / 碳足跡要求
+
+### 9 庫存管理
+#### 存貨功能
+- 週期 / 安全 / 在途 / 預期 / 批量
+#### 確定性模式
+- EOQ / EPQ / 數量折扣 / 欠撥模式
+#### 隨機模式
+- (Q,R) / (P,T) / (s,S)
+- 服務水準 CSL vs Fill Rate
+- 報童模式 Newsvendor
+#### 多階存貨
+- Clark-Scarf / 風險共擔 / 平方根法則
+#### 管理制度
+- ABC·VED 分類 / 週轉率 / 循環盤點
+- VMI / 寄售庫存 / 呆滯料 E&O
+
+## 三 執行面
+### 10 排程管理
+#### 排程理論
+- 分類法 α|β|γ
+- 單機 / 平行機 / Flow Shop / Job Shop
+- 目標：Makespan 流程時間 延遲
+- Johnson 法則 / SPT / EDD / Moore
+- NP-hard 與啟發式
+- 整備時間相依 / 批次排程 / 次要資源
+#### 派工與管制
+- 派工法則 FCFS SPT EDD CR ATC SLACK
+- 投料控制 / 瓶頸管理 / 批量分割
+- 生產活動管制 PAC：工單 進度 異常 料工回報
+- 甘特圖 / 電子看板 / 即時重排程與穩定性
+
+### 11 Factory Physics 系統理論
+#### 基本參數
+- 產出率 TH / 在製品 WIP / 週期時間 CT / 利用率
+#### Little's Law
+- WIP = TH × CT
+#### 效能界線
+- 最佳 / 最差 / 實務情況
+- Critical WIP 關鍵在製品
+#### 變異
+- 來源與量化 SCV
+- 當機 換模 品質損失
+#### 排隊理論
+- M/M/1 · M/G/1 · G/G/1 Kingman
+- 高利用率下週期時間爆炸
+#### 變異緩衝法則
+- 存貨 · 產能 · 時間 三選一
+#### 推式 vs 拉式
+- MRP / Kanban / CONWIP / POLCA
+#### 限制理論 TOC
+- 五大聚焦步驟 / DBR 鼓-緩衝-繩
+- 緩衝管理 / 有效產出會計
+
+## 四 改善面
+### 12 精實生產
+#### TPS 兩支柱
+- JIT 及時化 / Jidoka 自働化
+#### 浪費與流動
+- 七大浪費 / VSM 價值流圖
+- 節拍時間 / 單件流
+#### 拉式系統
+- 看板數量 / 超市 / 水蜘蛛
+- 平準化 Heijunka
+#### 現場技術
+- SMED 快速換模 / Poka-yoke 防呆
+- 5S / 標準作業 / Kaizen / PDCA / 方針管理
+#### 整合與爭論
+- 精實六標準差
+- 高混低量·MTO 環境適用性
+- 看板本質＝WIP 上限控制
+
+### 13 品質管理
+#### 觀念演進
+- 檢驗 → SQC → QA → TQM
+- Deming / Juran / Crosby / 田口
+#### SPC 統計製程管制
+- 計量值 X̄-R X̄-S I-MR
+- 計數值 p np c u
+- 管制界限 vs 規格界限 / 八大判異準則
+- 製程能力 Cp Cpk Pp Ppk
+#### 量測與抽樣
+- MSA / Gage R&R
+- 驗收抽樣 AQL / OC 曲線 / ISO 2859
+#### 六標準差
+- DMAIC / DMADV·DFSS
+#### 改善工具
+- QC 七大手法 / 新 QC 七大手法
+- 8D / 5 Why / 魚骨圖
+- DFMEA·PFMEA / RPN 與 AP 評級
+#### 品質成本 COQ
+- 預防 鑑定 內部失敗 外部失敗
+#### 標準與系統
+- ISO 9001 / IATF 16949
+- APQP PPAP MSA SPC 五大核心工具
+#### 與生產的介面
+- 不良侵蝕有效產能 / 重工干擾排程
+- 供應商來料品質
+
+### 14 TPM 設備管理
+#### 維護策略光譜
+- 事後 BM → 預防 PM → 預知 PdM → RCM
+#### TPM 八大支柱
+- 自主保養 / 計畫保養 / 個別改善
+- 品質保養 / 初期管理 / 教育訓練
+- 事務管理 / 安全衛生環境
+#### OEE
+- 時間稼動率 × 性能稼動率 × 良品率
+- 設備六大損失
+- 誤用：非瓶頸追高 OEE 造成過量生產
+#### 可靠度工程
+- MTBF / MTTR / 可用度 / 浴缸曲線
+- 串並聯系統可靠度
+#### 備品與排程
+- 慢速移動件存量決策
+- 計畫停機與生產排程的協調
+#### 預測性維護
+- 振動 溫度 電流訊號
+- ML 異常偵測 / 剩餘壽命 RUL
+
+## 五 外部與整合面
+### 15 供應鏈與物流
+#### 結構
+- SCOR：Plan Source Make Deliver Return
+#### 配銷
+- DRP / 多階網路設計 / 越庫作業
+- 運輸模式選擇 / VRP 路徑規劃 / 3PL
+#### 長鞭效應
+- 成因：需求訊號 批量 價格波動 短缺賽局
+- 對策：資訊共享 CPFR 每日低價 配額
+#### 協調契約
+- 回購 / 收益共享 / 數量彈性
+#### 韌性與風險
+- 中斷風險 / 備援產能 / 近岸友岸
+#### 數位化
+- 控制塔 / 端到端可視化 / 區塊鏈履歷
+
+### 16 ESG 與綠色生產
+#### ESG 構面
+- E 排放與資源 / S 勞動與人權 / G 合規揭露
+#### 揭露與法規
+- GRI SASB TCFD IFRS S1·S2
+- 台灣永續報告書規範
+#### 碳管理
+- 碳盤查 Scope 1·2·3 ISO 14064-1
+- 產品碳足跡 ISO 14067
+- 歐盟 CBAM 碳邊境調整
+#### 綠色生產
+- 清潔生產 / 污染源頭減量
+- 能源管理 ISO 50001 / 尖峰負載
+- 材料利用率 / 廢料回料 / 水循環
+#### 生命週期與循環
+- LCA 生命週期評估
+- DfE 環境導向設計 / 可拆解性
+- 3R·9R / 再製造 / 逆物流網路
+#### 績效與綜效
+- 單位產值碳排 / 能源密集度 / 回收率
+- 減廢常同時降本（與精實交集）
+
+### 17 顧客服務
+#### 服務水準定義
+- 準時交貨率 OTD / Fill Rate / 完美訂單
+- 訂單前置時間 / 交期可靠度
+- SLA 服務水準協議與罰則
+#### 訂單管理流程
+- 詢價→報價→訂單允諾→排程→出貨→售後
+- ATP 可承諾量 vs CTP 可允諾產能
+- 交期報價 Due Date Quotation
+#### 需求端管理
+- 訂單接受與拒絕決策
+- 需求塑形 / 促銷與產能協調
+#### 服務作業
+- 等候線管理 / 產能與需求匹配
+- 服務品質模式 SERVQUAL
+#### 售後與回饋
+- 保固 / 維修網路 / 備品供應
+- 客訴 8D → 製程改善閉環
+#### 需求端獲利
+- 收益管理 Revenue Management
+- 大量客製化 / 延遲策略 / CPQ 組態報價
+
+## 六 方法與技術
+### 18 決策方法工具箱
+#### 數學規劃
+- LP / MILP / 非線性規劃
+#### 動態規劃
+- Wagner-Whitin / Bellman 方程
+#### 隨機模式
+- 馬可夫鏈 / 排隊論 / Newsvendor
+#### 不確定性最佳化
+- 隨機規劃 / 強健最佳化 / DRO
+#### Metaheuristic
+- GA / SA / Tabu / ACO / NSGA-II
+#### 模擬
+- 離散事件 / 蒙地卡羅 / Agent-based
+#### 多準則決策
+- AHP / ANP / TOPSIS / DEA / VIKOR / 灰關聯
+#### 實驗設計
+- DOE / 因子實驗 / 反應曲面 / 田口方法
+#### 資料驅動
+- 機器學習預測 / 深度強化學習 DRL
+#### 賽局與行為
+- 供應鏈契約 / 報童偏誤
+
+### 19 智慧製造與 AI
+#### 架構與層級
+- CPS / IIoT / 邊緣雲端 / 5G
+- ERP → APS → MES → SCADA·PLC
+- 履歷追溯 / 資料品質 / 統一命名空間
+#### 數位分身
+- 機台 產線 廠級 供應鏈
+- 監控 預測 最佳化 控制
+- 與模擬差異：即時連動雙向回饋
+#### AI 與生產管理結合點
+- 需求與價格預測
+- 預測性維護 / RUL
+- AOI 視覺檢測 / 良率因果分析
+- DRL 動態排程 / 與最佳化引擎混合
+- 供應鏈風險預警 / 補貨自動化
+- 生成式 AI：知識萃取 SOP 生成 Agent 決策輔助
+#### 導入陷阱
+- 資料品質 / 可解釋性
+- 與既有排程邏輯衝突 / 人員信任
+#### 導入與變革
+- ROI 與試點選題 / 成熟度評估 SIRI
+- 人機協作與技能轉型
+- OT 資安與系統韌性
+
+### 20 績效衡量與整合
+#### 指標體系
+- 成本 品質 OTD 彈性 生產力
+- OEE / 週期時間 / 庫存週轉
+- 平衡計分卡 / SCOR
+- 局部最佳 vs 系統最佳的衝突
+#### 成本會計介面
+- 標準成本 / 作業基礎成本 ABC / 有效產出會計
+#### 整合議題
+- 大量客製化 / 延遲策略 / 模組化
+- 韌性 Resilience / 敏捷 Agility
+- 製造業服務化 Servitization
+</script>
+
+<script>
+(function () {
+  var md = document.getElementById('md').textContent;
+  var transformer = new markmap.Transformer();
+  var res = transformer.transform(md);
+  var svg = d3.select('#mm');
+  var mm = markmap.Markmap.create(svg.node(), {
+    colorFreezeLevel: 2,
+    initialExpandLevel: 3,
+    maxWidth: 340,
+    spacingVertical: 6,
+    spacingHorizontal: 90,
+    paddingX: 16,
+    fitRatio: 0.92,
+    duration: 300
+  }, res.root);
+
+  // 版面定案後再置中；視窗或容器尺寸變動時重新置中
+  function refit() { try { mm.fit(); } catch (e) {} }
+  // 初次繪製有 300ms 展開動畫，動畫結束後才量得到真正的內容範圍
+  [0, 350, 700].forEach(function (t) { setTimeout(refit, t); });
+  if (window.ResizeObserver) {
+    new ResizeObserver(refit).observe(document.querySelector('main'));
+  } else {
+    window.addEventListener('resize', refit);
+  }
+
+  function setLevel(n) {
+    (function walk(node, depth) {
+      node.payload = node.payload || {};
+      node.payload.fold = (n >= 0 && depth >= n) ? 1 : 0;
+      (node.children || []).forEach(function (c) { walk(c, depth + 1); });
+    })(res.root, 0);
+    mm.renderData();
+    [350, 700].forEach(function (t) { setTimeout(refit, t); });
+  }
+
+  document.getElementById('lv2').onclick = function () { setLevel(2); };
+  document.getElementById('lv3').onclick = function () { setLevel(3); };
+  document.getElementById('lv4').onclick = function () { setLevel(4); };
+  document.getElementById('all').onclick = function () { setLevel(-1); };
+  document.getElementById('fit').onclick = refit;
+})();
+</script>
+</body>
+</html>
