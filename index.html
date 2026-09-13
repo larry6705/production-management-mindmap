@@ -434,10 +434,10 @@
   var transformer = new markmap.Transformer();
   var res = transformer.transform(md);
   var svg = d3.select('#mm');
-  // 注意：Markmap.create(svg, opts, data) 會在建立當下立刻 fit() 一次，
-  // 那時節點還沒完成佈局，算出的縮放矩陣是 NaN 並且會一直殘留下去
-  // （瀏覽器拒收 NaN transform → 整張圖直接不顯示）。
-  // 所以這裡建立時不帶資料，之後再自己 setData + 自己置中。
+  // 資料必須在 create 時一起傳入，節點尺寸才會被正確量測；
+  // 事後才 setData() 會讓所有節點疊在同一點（展開後尤其明顯）。
+  // 代價是 create 內部會立刻 fit() 一次並可能算出 NaN 縮放矩陣，
+  // 這由下面自己的 refit() 覆蓋掉。
   var mm = markmap.Markmap.create(svg.node(), {
     colorFreezeLevel: 2,
     initialExpandLevel: 3,
@@ -447,7 +447,7 @@
     paddingX: 16,
     fitRatio: 0.92,
     duration: 300
-  });
+  }, res.root);
 
   // 自己算置中，不用 mm.fit()。
   // mm.fit() 是用 d3 transition 套用縮放，多次 fit 或動畫未結束時重疊呼叫，
@@ -489,11 +489,8 @@
     if (g.node()) g.attr('transform', t.toString());
   }
 
-  // 塞資料後再置中；初次繪製有 300ms 展開動畫，動畫跑完才量得到真正的內容範圍
-  // 注意：mm.setData() 回傳的 Promise 不保證 resolve，不能掛 .then() 等它，
-  // 否則置中永遠不會執行。改用計時器，refit() 本身會擋掉尺寸還沒就緒的情況。
-  svgNode.__zoom = d3.zoomIdentity;
-  mm.setData(res.root);
+  // 初次繪製有 300ms 展開動畫，動畫跑完才量得到真正的內容範圍。
+  // 多排幾次是為了蓋掉 create() 內部那次可能算出 NaN 的 fit。
   [0, 150, 450, 1000, 1800].forEach(function (t) { setTimeout(refit, t); });
 
   var rafId = null;
