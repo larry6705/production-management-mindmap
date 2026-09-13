@@ -514,15 +514,23 @@
     [0, 150, 450, 1000].forEach(function (t) { setTimeout(refit, t); });
   }
 
+  var healAttempts = 0;
   function healIfBroken() {
-    if (document.visibilityState === 'visible' && layoutBroken()) rebuild();
-    else refit();
+    if (!layoutBroken()) { refit(); return; }
+    if (healAttempts >= 5) return;          // 修不好就不要無限重建
+    healAttempts += 1;
+    rebuild();
   }
 
+  // 分頁切回前景、視窗取得焦點、使用者第一次操作時各檢查一次
   document.addEventListener('visibilitychange', function () {
     if (document.visibilityState === 'visible') setTimeout(healIfBroken, 60);
   });
-  setTimeout(healIfBroken, 1200);
+  window.addEventListener('focus', function () { setTimeout(healIfBroken, 60); });
+  ['pointerdown', 'wheel', 'keydown'].forEach(function (ev) {
+    window.addEventListener(ev, function () { setTimeout(healIfBroken, 0); }, { once: true });
+  });
+  [1200, 2500].forEach(function (t) { setTimeout(healIfBroken, t); });
 
   var rafId = null;
   function scheduleRefit() {
