@@ -471,9 +471,15 @@
     if (!isFinite(k) || !isFinite(tx) || !isFinite(ty)) return;
 
     var t = d3.zoomIdentity.translate(tx, ty).scale(k);
-    d3.select(svgNode).interrupt();          // 中斷進行中的動畫，避免內插出 NaN
-    svgNode.__zoom = t;                      // 讓之後的手動縮放從正確狀態接續
-    svg.select('g').attr('transform', t.toString());
+    svg.interrupt();                         // 中斷進行中的動畫，避免內插出 NaN
+    // 走 d3-zoom 官方路徑套用，markmap 的 zoom handler 才會同步；
+    // 直接寫 g 的 transform 屬性會被之後的 render 洗掉。
+    if (mm.zoom) {
+      mm.zoom.transform(svg, t);
+    } else {
+      svgNode.__zoom = t;
+      svg.select('g').attr('transform', t.toString());
+    }
   }
 
   // 塞資料後再置中；初次繪製有 300ms 展開動畫，動畫跑完才量得到真正的內容範圍
