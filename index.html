@@ -472,14 +472,17 @@
 
     var t = d3.zoomIdentity.translate(tx, ty).scale(k);
     svg.interrupt();                         // 中斷進行中的動畫，避免內插出 NaN
-    // 走 d3-zoom 官方路徑套用，markmap 的 zoom handler 才會同步；
-    // 直接寫 g 的 transform 屬性會被之後的 render 洗掉。
+
+    // 兩條路都走：
+    // 1) d3-zoom API — 更新內部狀態，之後手動縮放才會從正確位置接續。
+    //    但 markmap 的 zoom 監聽器是延遲掛上的，載入初期呼叫不會寫進 DOM。
+    // 2) 直接寫 g 的 transform — 確保畫面立刻正確。
     if (mm.zoom) {
-      mm.zoom.transform(svg, t);
-    } else {
-      svgNode.__zoom = t;
-      svg.select('g').attr('transform', t.toString());
+      try { mm.zoom.transform(svg, t); } catch (e) {}
     }
+    svgNode.__zoom = t;
+    var g = svg.select('g');
+    if (g.node()) g.attr('transform', t.toString());
   }
 
   // 塞資料後再置中；初次繪製有 300ms 展開動畫，動畫跑完才量得到真正的內容範圍
@@ -487,7 +490,7 @@
   // 否則置中永遠不會執行。改用計時器，refit() 本身會擋掉尺寸還沒就緒的情況。
   svgNode.__zoom = d3.zoomIdentity;
   mm.setData(res.root);
-  [0, 120, 400, 900].forEach(function (t) { setTimeout(refit, t); });
+  [0, 150, 450, 1000, 1800].forEach(function (t) { setTimeout(refit, t); });
 
   var rafId = null;
   function scheduleRefit() {
