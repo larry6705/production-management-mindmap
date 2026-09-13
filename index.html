@@ -445,19 +445,31 @@
     duration: 300
   }, res.root);
 
-  // 置中：容器尺寸為 0 時不做（會算出 NaN 並污染之後所有 fit）
+  // 自己算置中，不用 mm.fit()。
+  // mm.fit() 是用 d3 transition 套用縮放，多次 fit 或動畫未結束時重疊呼叫，
+  // 會從一個還在變動的矩陣做內插而算出 NaN，一旦變成 NaN 就再也救不回來。
+  // 這裡直接算出矩陣寫進去，沒有動畫、沒有競態。
   var main = document.querySelector('main');
+  var svgNode = svg.node();
+  var FIT_RATIO = 0.92, MAX_SCALE = 1.6;
+
   function refit() {
-    var r = main.getBoundingClientRect();
-    if (!r.width || !r.height) return;
-    try {
-      // 若目前的縮放矩陣已經是 NaN，先歸零再重算，否則會一直卡在 NaN
-      var t = svg.node().__zoom;
-      if (!t || !isFinite(t.k) || !isFinite(t.x) || !isFinite(t.y)) {
-        svg.node().__zoom = d3.zoomIdentity;
-      }
-      mm.fit();
-    } catch (e) {}
+    var box = main.getBoundingClientRect();
+    var rect = mm.state && mm.state.rect;
+    if (!box.width || !box.height || !rect) return;
+
+    var w = rect.x2 - rect.x1, h = rect.y2 - rect.y1;
+    if (!(w > 0) || !(h > 0)) return;
+
+    var k = Math.min(box.width / w * FIT_RATIO, box.height / h * FIT_RATIO, MAX_SCALE);
+    var tx = (box.width - w * k) / 2 - rect.x1 * k;
+    var ty = (box.height - h * k) / 2 - rect.y1 * k;
+    if (!isFinite(k) || !isFinite(tx) || !isFinite(ty)) return;
+
+    var t = d3.zoomIdentity.translate(tx, ty).scale(k);
+    d3.select(svgNode).interrupt();          // 中斷進行中的動畫，避免內插出 NaN
+    svgNode.__zoom = t;                      // 讓之後的手動縮放從正確狀態接續
+    svg.select('g').attr('transform', t.toString());
   }
 
   // 初次繪製有 300ms 展開動畫，動畫跑完才量得到真正的內容範圍
