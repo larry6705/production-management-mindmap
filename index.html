@@ -445,15 +445,36 @@
     duration: 300
   }, res.root);
 
-  // 版面定案後再置中；視窗或容器尺寸變動時重新置中
-  function refit() { try { mm.fit(); } catch (e) {} }
-  // 初次繪製有 300ms 展開動畫，動畫結束後才量得到真正的內容範圍
-  [0, 350, 700].forEach(function (t) { setTimeout(refit, t); });
-  if (window.ResizeObserver) {
-    new ResizeObserver(refit).observe(document.querySelector('main'));
-  } else {
-    window.addEventListener('resize', refit);
+  // 置中：容器尺寸為 0 時不做（會算出 NaN 並污染之後所有 fit）
+  var main = document.querySelector('main');
+  function refit() {
+    var r = main.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    try {
+      // 若目前的縮放矩陣已經是 NaN，先歸零再重算，否則會一直卡在 NaN
+      var t = svg.node().__zoom;
+      if (!t || !isFinite(t.k) || !isFinite(t.x) || !isFinite(t.y)) {
+        svg.node().__zoom = d3.zoomIdentity;
+      }
+      mm.fit();
+    } catch (e) {}
   }
+
+  // 初次繪製有 300ms 展開動畫，動畫跑完才量得到真正的內容範圍
+  [350, 800].forEach(function (t) { setTimeout(refit, t); });
+
+  var rafId = null;
+  function scheduleRefit() {
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(function () { rafId = null; refit(); });
+  }
+  if (window.ResizeObserver) {
+    new ResizeObserver(scheduleRefit).observe(main);
+  } else {
+    window.addEventListener('resize', scheduleRefit);
+  }
+
+  window.mm = mm;
 
   function setLevel(n) {
     (function walk(node, depth) {
